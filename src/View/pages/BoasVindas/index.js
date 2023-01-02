@@ -1,10 +1,7 @@
-import React, {useEffect, useState} from 'react';
 import { 
   View, 
   Text,
-  StyleSheet,
-  TouchableOpacity,
-  AsyncStorage, } from 'react-native';
+  TouchableOpacity } from 'react-native';
 import * as Animatable from 'react-native-animatable'
 import { useNavigation } from '@react-navigation/native'
 import Lista from '../../../Draws/lista-boasVindas.svg'
@@ -18,9 +15,6 @@ import {
 import {
   Jost_700Bold
 } from '@expo-google-fonts/jost'
-import {GestureHandlerRootView} from 'react-native-gesture-handler'
-
-console.disableYellowBox=true;
 
 export default function BoasVindas() {
   const navigation = useNavigation()
@@ -31,7 +25,7 @@ export default function BoasVindas() {
   })
 
   async function telas() {
-    let uid = await AsyncStorage.getItem('uid') 
+    //let uid = await AsyncStorage.getItem('uid') 
     if(true){
         navigation.navigate('Login')
     }else{
@@ -42,7 +36,7 @@ export default function BoasVindas() {
   if(!fontLoad) return <AppLoading/>
 
   return (
-    <GestureHandlerRootView className='flex-1 bg-zinc-900'>
+    <View className='flex-1 bg-zinc-900'>
       <StatusBar barStyle={'dark-content'} backgroundColor={'#0000'}/>
     <Animatable.View style={{flex:2, alignItems:'center', justifyContent:'center'}} animation='fadeInUp'>
       <Lista width={300}/>
@@ -58,8 +52,6 @@ export default function BoasVindas() {
           <Text className="text-slate-50 text-center text-[23px] text-bold" style={{fontFamily: 'Jost_700Bold'}}>Acessar</Text>
         </TouchableOpacity>
       </Animatable.View>
-    </GestureHandlerRootView>
-    
-    
+    </View>   
   );
 }
