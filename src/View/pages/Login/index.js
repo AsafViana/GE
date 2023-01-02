@@ -27,9 +27,11 @@ import {
     Input,
     Icon,
     Button,
-    Pressable
+    Pressable,
+    Flex,
+    Spacer,
 } from 'native-base'
-import {MaterialIcons} from '@expo/vector-icons'
+import {MaterialIcons, SimpleLineIcons} from '@expo/vector-icons'
 import LoginDraw from '../../../Draws/login.svg'
 
 console.disableYellowBox=true;
@@ -78,6 +80,7 @@ export default function Login() {
             alert('errou as credenciais')
         })
     }
+
     if(!fontLoad) return <AppLoading/>
     return (
 <View className='flex-1 bg-zinc-900'>
@@ -141,16 +144,34 @@ export default function Login() {
 
                     <FormControl.ErrorMessage className='ml-4 text-xl'>E-mai ou senha incorretos</FormControl.ErrorMessage>
                 </FormControl>
-                    
-                <Button
-                    mt='7'
-                    color='#48a1d9'
-                    isDisabled={!acessar}
-                    variant='subtle'
-                    isLoading={load}
-                    rounded='full'
-                    >Entrar</Button>
+                    <Flex direction='row' mb="2.5" mt="1.5" alignItems='center'>
+                        
+                        <Button
+                            mt='7'
+                            variant='subtle'
+                            rounded='full'
+                            width={150}
+                            backgroundColor='#48a1d9'
+                            _text={{color: '#f1f1f1', fontWeight: 'black', fontSize: 20}}
+                            leftIcon={<Icon as={SimpleLineIcons} name="social-google" size="md" color='#f1f1f1' />}
+                            >
+                            Google
+                        </Button>
 
+                        <Spacer/>
+
+                        <Button
+                            mt='7'
+                            width={150}
+                            backgroundColor='#48a1d9'
+                            _text={{color: '#f1f1f1', fontWeight: 'black', fontSize: 20}}
+                            isDisabled={!acessar}
+                            tex
+                            variant='subtle'
+                            isLoading={load}
+                            rounded='full'
+                            >Entrar</Button>
+                    </Flex>  
         <TouchableOpacity style={{
         marginTop: 14,
         alignItems: 'center'}} onPress={() => {
