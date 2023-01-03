@@ -34,7 +34,7 @@ import {
 import {MaterialIcons, SimpleLineIcons} from '@expo/vector-icons'
 import LoginDraw from '../../../Draws/login.svg'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {  } from '@react-native-google-signin/google-signin';
 
 console.disableYellowBox=true;
 
