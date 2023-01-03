@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "325691930674-9loal8ehhr4qqljl3eku6j7g6ia54t2r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ge",
+            "certificate_hash": "0768d15942517efa836c372aaa7cc9078a7222f3"
+          }
+        },
+        {
+          "client_id": "325691930674-gpu5cat715kp7017dp8kpnp17sflsbp8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ge",
+            "certificate_hash": "fff3c62b854248b1becf3da180b23f5f21e3be12"
+          }
+        },
+        {
           "client_id": "325691930674-ulfgsmdtfgpmq1ia0kchsdrcb5mir92l.apps.googleusercontent.com",
           "client_type": 3
         }
