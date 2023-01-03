@@ -33,6 +33,8 @@ import {
 } from 'native-base'
 import {MaterialIcons, SimpleLineIcons} from '@expo/vector-icons'
 import LoginDraw from '../../../Draws/login.svg'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 console.disableYellowBox=true;
 
@@ -41,7 +43,8 @@ export default function Login() {
     const [email, setEmail] = useState('')
     const [load, setLoad] = useState(false)
     const [acessar, setAcessar] = useState(true)
-    const [invalido, setInvalido] = useState(false)
+    const [invalidoEmail, setInvalidoEmail] = useState(false)
+    const [invalidoSenha, setInvalidoSenha] = useState(false)
     const navigation = useNavigation()
     const [show, setShow] = useState(false)
     const [fontLoad] = useFonts({
@@ -51,6 +54,8 @@ export default function Login() {
       })
 
       useEffect(() => {
+        setInvalidoSenha(false)
+        setInvalidoEmail(false)
         if(password != '' && email != '' ){
             setAcessar(true)
         }
@@ -67,6 +72,7 @@ export default function Login() {
         setLoad(true)
         auth().signInWithEmailAndPassword(formatarEmail(email), password)
         .then(() => {
+            AsyncStorage.setItem('usuario', email)
             navigation.dispatch(
                 CommonActions.reset({
                     index: 1,
@@ -76,8 +82,18 @@ export default function Login() {
                 }
                 )
               )
-        }).catch(() => {
-            alert('errou as credenciais')
+        }).catch((error) => {
+            setLoad(false)
+            console.error(error['code'])
+            switch (error['code']){
+                case 'auth/network-request-failed':
+                    alert('sem conexão com a internet')
+                case 'auth/invalid-email':
+                    setInvalidoEmail(true)
+                case 'auth/wrong-password':
+                    setInvalidoSenha(true)
+            }
+            
         })
     }
 
@@ -96,9 +112,10 @@ export default function Login() {
                     <LoginDraw width={300}/>
                 </View>
 
-                <FormControl mt={-50} isInvalid={invalido}>
+                <FormControl mt={-50} isInvalid={invalidoEmail}>
                     <Heading className='ml-4 mb-1 text-lg text-sky-50'  tintColor='#48a1d9'>E-mail</Heading>
                     <Input
+                    onChangeText={(text) => setEmail(text)}
                     placeholder='seu@email.com'
                     color='amber.100'
                     fontSize={15}
@@ -116,11 +133,13 @@ export default function Login() {
                     }
                     />
                 </FormControl>
+                <Text className='ml-4 font-black mt-1' style={{color: invalidoEmail ? 'red' : '#0000'}} >E-mail incorreto!!!</Text>
 
-                <FormControl isInvalid={invalido}>
-                    <Heading className='ml-4 mt-4 mb-1 text-lg text-sky-50'>Senha</Heading>
+                <FormControl isInvalid={invalidoSenha}>
+                    <Heading className='ml-4 mt-2 mb-1 text-lg text-sky-50'>Senha</Heading>
                     <Input
                     placeholder='sua senha'
+                    onChangeText={(text) => setPassword(text)}
                     className=''
                     rounded='full'
                     color='amber.100'
@@ -141,8 +160,8 @@ export default function Login() {
             <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="4" color="muted.400" />
           </Pressable>}
                     />
-
-                    <FormControl.ErrorMessage className='ml-4 text-xl'>E-mai ou senha incorretos</FormControl.ErrorMessage>
+                    <Text className='ml-4 font-black mt-1' style={{color: invalidoSenha ? 'red' : '#0000'}} >Senha incorreta!!!</Text>
+                    
                 </FormControl>
                     <Flex direction='row' mb="2.5" mt="1.5" alignItems='center'>
                         
@@ -166,7 +185,7 @@ export default function Login() {
                             backgroundColor='#48a1d9'
                             _text={{color: '#f1f1f1', fontWeight: 'black', fontSize: 20}}
                             isDisabled={!acessar}
-                            tex
+                            onPress={() => logar()}
                             variant='subtle'
                             isLoading={load}
                             rounded='full'

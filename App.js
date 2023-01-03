@@ -5,6 +5,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {NativeBaseProvider} from 'native-base'
+import 'expo-dev-client'
 
 export default function App() {
   return (
