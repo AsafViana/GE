@@ -18,7 +18,7 @@ import LottieView from 'lottie-react-native'
 
 console.disableYellowBox=true;
 
-export default function Adicionar() {
+export function Adicionar() {
   const [modalVisible, setModalVisible] = useState(false);
   const [colorStatusBar, setColorStatusBar] = useState('#48a1d9')
   const [nome, setNome] = useState('')

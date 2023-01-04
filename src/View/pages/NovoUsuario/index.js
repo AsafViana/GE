@@ -4,12 +4,26 @@ import {
     ActivityIndicator, 
     Text, 
     StyleSheet, 
-    TouchableOpacity, 
-    TextInput,
     ScrollView} from "react-native"
 import * as Animatable from 'react-native-animatable'
 import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
+import {StatusBar} from 'expo-status-bar'
+import {
+    Box,
+    Center,
+    Heading,
+    FormControl,
+    Input,
+    Icon,
+    Button,
+    Pressable,
+    Flex,
+    Spacer,
+} from 'native-base'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import auth from '@react-native-firebase/auth'
+import Popup from '../../component/Popup'
 
 console.disableYellowBox=true;
 
@@ -19,8 +33,9 @@ export default function NovoUsuario() {
     const [email, setEmail] = useState('')
     const [empresa, setEmpresa] = useState('')
     const [load, setLoad] = useState(false)
-    const [botao, setbotao] = useState(true)
-    const [estiloBotao, setEstiloBotao] = useState(styles.buttonDes)
+    const [botao, setbotao] = useState(false)
+    const [show, setShow] = useState(false)
+    const [avisoSenha, setAvisoSenha] = useState(false)
     const [statusSenhas, setStatusSenhas] = useState('')
     const navigation = useNavigation()
     
@@ -41,7 +56,20 @@ export default function NovoUsuario() {
         }
     }
 
-    async function cadastrar(dados){
+    async function cadastrar(){
+        setLoad(true)
+
+        auth()
+        .createUserWithEmailAndPassword(
+            email,
+            password
+        ).catch((error) => {
+            switch (error['code']){
+                case 'auth/network-request-failed':
+                    alert('sem conexão com a internet')
+            }
+        })
+
         firestore()
         .collection('dadosUsuario')
         .doc('usuarios')
@@ -62,66 +90,151 @@ export default function NovoUsuario() {
                 )
             )
         })
+        setLoad(false)
     }
 
     useEffect(() => {
-        let d = verificarSenhas()
+        let d = verificarSenhas() 
         if(password != '' && confirmPassword != '' && email != '' && empresa != '' && d){
             setbotao(false)
-            setEstiloBotao(styles.buttonAbi)
+            setAvisoSenha(false)
         }
         else{
             setbotao(true)
-            setEstiloBotao(styles.buttonDes)
+            setAvisoSenha(true)
         }
     }, [password, confirmPassword, email, empresa])
 
 
     return (
-    <View style={styles.conteiner}>
-        <Animatable.View animation='slideInDown' delay={500} style={styles.conteinerHeader}>
-            <Text style={styles.message}>Novo Usuario:</Text>
+    <View className='flex-1 bg-zinc-900'>
+        <Popup/>
+        <StatusBar barStyle={'dark-content'} hidden={false} translucent={true} backgroundColor={'#0000'}/>
+        <Animatable.View animation='fadeInLeft' delay={500} className='mt-16 ml-6 mb-8'>
+            <Heading className='text-[28px] text-slate-50'>Novo Usuario:</Heading>
         </Animatable.View>
 
-        <Animatable.View animation='zoomIn' style={styles.conteinerForm}>
+        <Animatable.View 
+        animation='fadeInUp' 
+        className='bg-[#03588c] flex-1 rounded-t-[30px] px-6'>
 
             <ScrollView>
-                <Text style={styles.title}>Email</Text>
-            <TextInput 
-            keyboardType='email-address'
-            placeholder='Digite seu email...'
-            placeholderTextColor="#a1a1a1"
-            style={styles.input}
-            onChangeText={(text) => setEmail(text)}/>
+            <FormControl mt={10}>
+                    <Heading 
+                    className='ml-4 mb-1 text-lg text-sky-50'  
+                    tintColor='#48a1d9'>E-mail</Heading>
+                    <Input
+                    onChangeText={(text) => setEmail(text)}
+                    placeholder='seu@email.com'
+                    color='amber.100'
+                    fontSize={15}
+                    rounded='full'
+                    InputLeftElement={
+                        <Icon
+                        as={
+                            <Ionicons name='person' />
+                        }
+                        size={5}
+                        ml={4}
+                        className=''
+                        color='#FFFFFF93'
+                        />
+                    }
+                    />
+            </FormControl>
             
-            <Text style={styles.title}>Empresa</Text>
-            <TextInput 
-            placeholder='Digite o nome da sua empresa...'
-            placeholderTextColor="#a1a1a1"
-            style={styles.input}
-            onChangeText={(text) => setEmpresa(text)}/>
+            <FormControl mt={5}>
+                    <Heading 
+                    className='ml-4 mb-1 text-lg text-sky-50'  
+                    tintColor='#48a1d9'>Empresa</Heading>
+                    <Input
+                    onChangeText={(text) => setEmpresa(text)}
+                    placeholder='Nome da sua empresa'
+                    color='amber.100'
+                    fontSize={15}
+                    rounded='full'
+                    InputLeftElement={
+                        <Icon
+                        as={
+                            <Ionicons name='business' />
+                        }
+                        size={5}
+                        ml={4}
+                        className=''
+                        color='#FFFFFF93'
+                        />
+                    }
+                    />
+            </FormControl>
             
-            <Text style={styles.title}>Senha</Text>
-            <TextInput 
-            placeholder='Digite sua senha...'
-            placeholderTextColor="#a1a1a1"
-            style={styles.input}
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}/>
-            
-            <Text style={styles.title}>Confirma senha</Text>
-            <TextInput placeholder='Confirme sua senha...'
-            placeholderTextColor="#a1a1a1"
-            style={styles.input}
-            onChangeText={(text) => setConfirmPassword(text)}
-            secureTextEntry={true}/>
-            <Text style={{color: '#ff0000' }}>{statusSenhas}</Text>
+            <FormControl mt={5}>
+                    <Heading className='ml-4 mt-2 mb-1 text-lg text-sky-50'>Senha</Heading>
+                    <Input
+                    placeholder='Digite sua senha'
+                    onChangeText={(text) => setPassword(text)}
+                    className=''
+                    rounded='full'
+                    color='amber.100'
+                    fontSize={15}
+                    type={show ? "text" : "password"}
+                    InputLeftElement={
+                        <Icon
+                        as={
+                            <Ionicons name='lock-closed'/>
+                        }
+                        size={5}
+                        ml={4}
+                        className=''
+                        color='#FFFFFF93'
+                        />
+                    }
+                    InputRightElement={<Pressable onPress={() => setShow(!show)}>
+            <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="4" color="muted.400" />
+          </Pressable>}
+                    />                    
+                </FormControl>
+        
+                <FormControl mt={5} isInvalid={avisoSenha}>
+                    <Heading className='ml-4 mt-2 mb-1 text-lg text-sky-50'>Senha</Heading>
+                    <Input
+                    placeholder='Digite novamente sua senha'
+                    onChangeText={(text) => setConfirmPassword(text)}
+                    className=''
+                    rounded='full'
+                    color='amber.100'
+                    fontSize={15}
+                    type={show ? "text" : "password"}
+                    InputLeftElement={
+                        <Icon
+                        as={
+                            <Ionicons name='lock-closed'/>
+                        }
+                        size={5}
+                        ml={4}
+                        className=''
+                        color='#FFFFFF93'
+                        />
+                    }
+                    InputRightElement={<Pressable onPress={() => setShow(!show)}>
+            <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="4" color="muted.400" />
+          </Pressable>}
+                    /> 
+                       <Text 
+                       className='ml-4 text-lg font-black mt-1' 
+                       style={{color: true ? 'red' : '#0000'}} >{statusSenhas}</Text>                
+                </FormControl>
 
-            <TouchableOpacity disabled={botao} 
-            onPress={cadastrar} 
-            style={estiloBotao}>
-                <Text style={styles.buttonText}>Cadastrar</Text>
-            </TouchableOpacity>
+            <Button
+                mt='5'
+                width={360}
+                backgroundColor='#48a1d9'
+                _text={{color: '#f1f1f1', fontWeight: 'black', fontSize: 20}}
+                isDisabled={botao}
+                //onPress={() => logar()}
+                variant='subtle'
+                isLoading={load}
+                rounded='full'
+                >Entrar</Button>
 
             <ActivityIndicator 
                 animating = {load}

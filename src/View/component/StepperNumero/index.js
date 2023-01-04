@@ -3,7 +3,7 @@ import {PlusIcon, MinusIcon} from 'react-native-heroicons/solid'
 import { TouchableOpacity, StyleSheet, TextInput, View } from "react-native";
 
 
-export default function StepperNumero(onChange) {
+export function StepperNumero(onChange) {
     const [quantia, setQuantia] = useState(0)
     return (
     <View style={styles.input2}>

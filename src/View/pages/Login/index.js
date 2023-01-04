@@ -7,9 +7,8 @@ import {
     TouchableOpacity, } from "react-native"
 import {StatusBar} from 'expo-status-bar'
 import * as Animatable from 'react-native-animatable'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, CommonActions } from '@react-navigation/native'
 import auth from '@react-native-firebase/auth'
-import { CommonActions } from '@react-navigation/native'
 import {
   useFonts,
   JosefinSans_700Bold,
@@ -30,11 +29,13 @@ import {
     Pressable,
     Flex,
     Spacer,
+    ScrollView,
 } from 'native-base'
-import {MaterialIcons, SimpleLineIcons} from '@expo/vector-icons'
+import {Ionicons, MaterialIcons} from '@expo/vector-icons'
 import LoginDraw from '../../../Draws/login.svg'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {  } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+
 
 console.disableYellowBox=true;
 
@@ -45,6 +46,8 @@ export default function Login() {
     const [acessar, setAcessar] = useState(true)
     const [invalidoEmail, setInvalidoEmail] = useState(false)
     const [invalidoSenha, setInvalidoSenha] = useState(false)
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
     const navigation = useNavigation()
     const [show, setShow] = useState(false)
     const [fontLoad] = useFonts({
@@ -97,23 +100,64 @@ export default function Login() {
         })
     }
 
-    if(!fontLoad) return <AppLoading/>
-    return (
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    async function _signIn (){
+        try {
+          await GoogleSignin.hasPlayServices();
+          const {accessToken, idToken} = await GoogleSignin.signIn();
+          navigation.navigate('Home')
+        } catch (error) {
+          if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+            // user cancelled the login flow
+            alert('Cancel');
+          } else if (error.code === statusCodes.IN_PROGRESS) {
+            alert('Signin in progress');
+            // operation (f.e. sign in) is in progress already
+          } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+            alert('PLAY_SERVICES_NOT_AVAILABLE');
+            // play services not available or outdated
+          } else {
+            console.error(error)
+          }
+        }
+      };
+    
+    useEffect(() => {
+    GoogleSignin.configure({
+        webClientId: '325691930674-ulfgsmdtfgpmq1ia0kchsdrcb5mir92l.apps.googleusercontent.com',
+        offlineAccess: true,
+        scopes: ['email'],
+        }); // unsubscribe on unmount
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+    }, []);
+    
+    if (initializing) return null;
+
+    else if(!fontLoad) return <AppLoading/>
+    else if(user) return (
 <View className='flex-1 bg-zinc-900'>
 <StatusBar barStyle={'dark-content'} hidden={false} translucent={true} backgroundColor={'#0000'}/>
     <Animatable.View animation='fadeInLeft' delay={500} className='mt-16 ml-6 mb-8'>
         <Heading className='text-[28px] text-slate-50'>Bem-Vindo(a)</Heading>
     </Animatable.View>
 
-    <Animatable.View animation='fadeInUp' className='bg-[#03588c] flex-1 rounded-t-[30px] px-6'>        
-        <Center height='full'>
+    <Animatable.View animation='fadeInUp' className='bg-[#03588c] flex-1 rounded-t-[30px] px-6'>  
+        <ScrollView>
+            <Center height='full'>
             <Box width='full' >
-                <View style={{alignItems:'center', justifyContent:'center', marginVertical: -100, marginTop: -50}}>
+                <View style={{alignItems:'center', justifyContent:'center', marginVertical: -50, marginTop: -100}}>
                     <LoginDraw width={300}/>
                 </View>
 
                 <FormControl mt={-50} isInvalid={invalidoEmail}>
-                    <Heading className='ml-4 mb-1 text-lg text-sky-50'  tintColor='#48a1d9'>E-mail</Heading>
+                    <Heading 
+                    className='ml-4 mb-1 text-lg text-sky-50'  
+                    tintColor='#48a1d9'>E-mail</Heading>
                     <Input
                     onChangeText={(text) => setEmail(text)}
                     placeholder='seu@email.com'
@@ -123,7 +167,7 @@ export default function Login() {
                     InputLeftElement={
                         <Icon
                         as={
-                            <MaterialIcons name='person' />
+                            <Ionicons name='person' />
                         }
                         size={5}
                         ml={4}
@@ -138,7 +182,7 @@ export default function Login() {
                 <FormControl isInvalid={invalidoSenha}>
                     <Heading className='ml-4 mt-2 mb-1 text-lg text-sky-50'>Senha</Heading>
                     <Input
-                    placeholder='sua senha'
+                    placeholder='Digite sua senha'
                     onChangeText={(text) => setPassword(text)}
                     className=''
                     rounded='full'
@@ -148,7 +192,7 @@ export default function Login() {
                     InputLeftElement={
                         <Icon
                         as={
-                            <MaterialIcons name='lock'/>
+                            <Ionicons name='lock-closed'/>
                         }
                         size={5}
                         ml={4}
@@ -165,7 +209,8 @@ export default function Login() {
                 </FormControl>
                     <Flex direction='row' mb="2.5" mt="1.5" alignItems='center'>
                         
-                        <Button
+                        {/*<Button
+                        onPress={() => _signIn()}
                             mt='7'
                             variant='subtle'
                             rounded='full'
@@ -175,13 +220,13 @@ export default function Login() {
                             leftIcon={<Icon as={SimpleLineIcons} name="social-google" size="md" color='#f1f1f1' />}
                             >
                             Google
-                        </Button>
+                </Button>
 
-                        <Spacer/>
+                        <Spacer/>*/}
 
                         <Button
                             mt='7'
-                            width={150}
+                            width={360}
                             backgroundColor='#48a1d9'
                             _text={{color: '#f1f1f1', fontWeight: 'black', fontSize: 20}}
                             isDisabled={!acessar}
@@ -203,6 +248,8 @@ export default function Login() {
         </TouchableOpacity>
             </Box>
         </Center>
+        </ScrollView>      
+        
     </Animatable.View>
 </View>
 );

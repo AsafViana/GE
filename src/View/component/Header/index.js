@@ -4,7 +4,7 @@ import {UserIcon, ChevronDownIcon} from 'react-native-heroicons/outline'
 import Popup from '../Popup/1'
 import {SafeAreaView} from 'react-native-safe-area-context'
 
-export default function index() {
+export function index() {
     const [popup, setPopup] = useState(false)
     
 
