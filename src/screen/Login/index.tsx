@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar'
 import { color } from '../../../env.json'
 import { auth, signInWithEmailAndPassword } from '../../Service/firebaseConfig'
 import LottieView from 'lottie-react-native'
+import { storeData } from '../../Service/asyncStorage'
 
 export default function index(props) {
 	const navigation = useNavigation()
@@ -37,10 +38,10 @@ export default function index(props) {
 		setCarregando(true)
 		signInWithEmailAndPassword(auth, Email, Senha)
 			.then(data => {
-				const uid = data.user.uid
-				console.log(uid)
-				navigation.navigate('Logado')
 				setCarregando(false)
+				const uid = data.user.uid
+				storeData('uid', uid)
+				navigation.navigate('Logado')
 			})
 			.catch((obj) => {
 				console.log(obj.code)

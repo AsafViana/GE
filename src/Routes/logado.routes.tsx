@@ -21,7 +21,7 @@ export function LogadoRoutes() {
 				},
 			}}
 			tabBar={(props) => <CustomTabBar {...props} />}
-			initialRouteName="Adicionar">
+			initialRouteName="Home">
 			<Screen name="Home" component={Home} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'home' }} />
 			<Screen name="Adicionar" component={Adicionar} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'add' }} />
 			<Screen name="Usuario" component={Usuario} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'user' }} />

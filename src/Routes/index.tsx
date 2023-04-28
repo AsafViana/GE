@@ -6,7 +6,7 @@ import { RoutesRoutes } from './routes.routes'
 export function Routes() {
 	return (
 		<NavigationContainer>
-			<RoutesRoutes/>
+			<RoutesRoutes />
 		</NavigationContainer>
 	)
 }
