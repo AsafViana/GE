@@ -24,6 +24,7 @@ export function RoutesRoutes(){
             <Screen name="Stack" component={StackRoutes} />
             <Screen name="Logado" component={LogadoRoutes} />
             <Screen name="Deslogado" component={DeslogadoRoutes} />
+            
         </Navigator>
     )
 }
