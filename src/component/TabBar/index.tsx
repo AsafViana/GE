@@ -49,6 +49,9 @@ export function CustomTabBar({ state, descriptors, navigation }) {
 							case 'user':
 								icone = <FontAwesome name="user" size={40} color={isFocused ? color.branco : '#535353'} style={{marginHorizontal: 10, marginVertical: 4}} onPress={onPress} />
 								break
+							case 'teste': 
+							icone = <Ionicons name="hammer" size={40} color={isFocused ? color.branco : '#535353'} style={{marginHorizontal: 5, marginVertical: 4}} onPress={onPress} />
+							break
 						}
 						return (
 							<TouchableOpacity key={route.key} accessibilityRole="button" accessibilityState={isFocused ? { selected: true } : {}} accessibilityLabel={options.tabBarAccessibilityLabel} testID={options.tabBarTestID} onPress={onPress} onLongPress={onLongPress} style={styles.buttonTab}>

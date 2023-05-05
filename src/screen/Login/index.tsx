@@ -5,7 +5,7 @@ import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
 import { color } from '../../../env.json'
-import { auth, signInWithEmailAndPassword } from '../../Service/firebaseConfig'
+import { auth, signInWithEmailAndPassword, sendPasswordResetEmail } from '../../Service/firebaseConfig'
 import LottieView from 'lottie-react-native'
 import { storeData } from '../../Service/asyncStorage'
 
@@ -41,6 +41,8 @@ export default function index(props) {
 				setCarregando(false)
 				const uid = data.user.uid
 				storeData('uid', uid)
+				storeData('email', Email)
+				storeData('senha', Senha)
 				navigation.navigate('Logado')
 			})
 			.catch((obj) => {
@@ -61,8 +63,30 @@ export default function index(props) {
 			}) 
 	}
 
+	function resetSenha() {
+
+	}
+
 	return (
 		<Center flex={1}>
+			{/* <Modal isOpen={ErroSenhaExibir} onClose={() => setErroSenhaExibir(false)}>
+				<Modal.Content>
+					<Modal.CloseButton onPress={() => setErroSenhaExibir(false)} />
+					<Modal.Body bgColor={'ale.900'}>
+						<Center flex={1}>
+							<LottieView source={require('../../Animations/alerta.json')} autoPlay={true} loop={true} style={{ width: 200, height: 200 }} resizeMode="cover" />
+
+							<Text fontWeight={'black'} fontSize={'2xl'} color={'error.300'}>
+								Senha incorreta
+							</Text>
+							<Text fontSize={'lg'} color={'error.300'}>
+								Verifique a sua senha
+							</Text>
+						</Center>
+					</Modal.Body>
+				</Modal.Content>
+			</Modal> */}
+
 			<Modal isOpen={ErroSenhaExibir} onClose={() => setErroSenhaExibir(false)}>
 				<Modal.Content>
 					<Modal.CloseButton onPress={() => setErroSenhaExibir(false)} />

@@ -1,12 +1,12 @@
 import { Center, Text, Button, Image, ScrollView, FormControl, Input, Box, Modal } from 'native-base'
 import React, { useState, useEffect } from 'react'
-import { Platform } from 'react-native'
 import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, CommonActions } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
 import { color } from '../../../env.json'
-import { auth, createUserWithEmailAndPassword } from '../../Service/firebaseConfig'
+import { setDoc, auth, createUserWithEmailAndPassword, doc, firestore } from '../../Service/firebaseConfig'
 import LottieView from 'lottie-react-native'
+import { storeData } from '../../Service/asyncStorage'
 
 export default function index(props) {
 	const navigation = useNavigation()
@@ -19,6 +19,7 @@ export default function index(props) {
 	const [CorSenhaInput, setCorSenhaInput] = useState(color.branco)
 	const [ErroDesconhecidoExibir, setErroDesconhecidoExibir] = useState(false)
 	const [ExibirSenha, setExibirSenha] = useState(false)
+	const [Carregando, setCarregando] = useState(false)
 
 	useEffect(() => {
 		if (Email != null && Senha != null && ConfirmaSenha != null && Empresa != null && Senha === ConfirmaSenha) {
@@ -38,8 +39,27 @@ export default function index(props) {
 
 	function enviar() {
 		createUserWithEmailAndPassword(auth, Email, Senha)
-			.then(() => {
-
+			.then(({ user }) => {
+				storeData('email', Email)
+				storeData('senha', Senha)
+				storeData('uid', user.uid).then(async () => {
+					try {
+						await setDoc(doc(firestore, 'users', user.uid), {
+							Empresa: Empresa,
+							uid: user.uid,
+							email: Email,
+						})
+						setCarregando(false)
+					} catch (e) {
+						console.log(e)
+					}
+					navigation.dispatch(
+						CommonActions.reset({
+							index: 1,
+							routes: [{ name: 'Logado' }],
+						})
+					)
+				})
 			})
 			.catch((error) => {
 				console.log(error.code)
@@ -102,6 +122,8 @@ export default function index(props) {
 						<Input
 							value={Email}
 							onChangeText={setEmail}
+							autoCapitalize='none'
+							keyboardType='email-address'
 							shadow={'9'}
 							bgColor={color.azulMedio}
 							InputLeftElement={<FontAwesome style={{ marginLeft: 15 }} name="user" size={30} color={color.azulClaro} />}
@@ -124,6 +146,7 @@ export default function index(props) {
 						<Input
 							value={Senha}
 							onChangeText={setSenha}
+							autoCapitalize='none'
 							secureTextEntry={!ExibirSenha}
 							InputRightElement={<Ionicons onPress={() => setExibirSenha(!ExibirSenha)} name={ExibirSenha ? 'eye' : 'eye-off'} size={30} color={color.azulClaro} style={{ marginRight: 10 }} />}
 							shadow={'9'}
@@ -147,6 +170,7 @@ export default function index(props) {
 						</FormControl.Label>
 						<Input
 							value={ConfirmaSenha}
+							autoCapitalize='none'
 							onChangeText={setConfirmaSenha}
 							secureTextEntry={!ExibirSenha}
 							InputRightElement={<Ionicons onPress={() => setExibirSenha(!ExibirSenha)} name={ExibirSenha ? 'eye' : 'eye-off'} size={30} color={color.azulClaro} style={{ marginRight: 10 }} />}
@@ -163,7 +187,7 @@ export default function index(props) {
 						/>
 					</FormControl>
 
-					<Button isDisabled={!LiberarEnviar} shadow={'9'} my={10} bgColor={color.azulClaro} rounded={'3xl'} w={'100%'} _text={{ fontSize: 22, fontWeight: 'bold' }}>
+					<Button  isLoading={Carregando} onPress={enviar} isDisabled={!LiberarEnviar} shadow={'9'} my={10} bgColor={color.azulClaro} rounded={'3xl'} w={'100%'} _text={{ fontSize: 22, fontWeight: 'bold' }}>
 						Enviar
 					</Button>
 				</Box>

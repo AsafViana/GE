@@ -2,7 +2,7 @@
   "expo": {
     "name": "GE",
     "slug": "GE",
-    "version": "1.0.0",
+    "version": "1 .0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,10 +22,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#001B2C"
-      }
+      },
+      "package": "com.zaftech.ge"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "36015cc9-5d10-44b9-a70d-a26eb2a70d1d"
+      }
     }
   }
 }

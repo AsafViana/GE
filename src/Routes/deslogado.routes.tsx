@@ -7,7 +7,7 @@ const {Screen, Navigator} = createStackNavigator()
 
 export function DeslogadoRoutes(){
     return (
-        <Navigator screenOptions={{headerShown:false}}>
+        <Navigator initialRouteName='' screenOptions={{headerShown:false}}>
             <Screen name="Login" component={Login} />
             <Screen name='Cadastro' component={Cadastro}/>
             <Screen name='EsqueceuSenha' component={EsqueciSenha}/>

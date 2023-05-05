@@ -24,7 +24,7 @@ const getData = (key) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const value = await AsyncStorage.getItem(key)
-			if (value !== null) {
+			if (value) {
 				resolve(value)
 			}
 		} catch (e) {

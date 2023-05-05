@@ -3,6 +3,7 @@ import { CustomTabBar } from '../component/TabBar'
 import Home from '../screen/Home'
 import Adicionar from '../screen/Adicionar'
 import Usuario from '../screen/Usuario/'
+import Testes from '../screen/Testes'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -25,6 +26,7 @@ export function LogadoRoutes() {
 			<Screen name="Home" component={Home} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'home' }} />
 			<Screen name="Adicionar" component={Adicionar} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'add' }} />
 			<Screen name="Usuario" component={Usuario} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'user' }} />
+			<Screen name="Testes" component={Testes} options={{ tabBarHideOnKeyboard: true, tabBarIcon: 'teste' }} />
 		</Navigator>
 	)
 }
