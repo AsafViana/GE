@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+<<<<<<< HEAD
     './src/View/**/*.{js, jsx}'
+=======
+    './src/View/**/*.{js, tsx}'
+>>>>>>> login
   ],
   theme: {
     extend: {
